@@ -15,13 +15,13 @@ public class Main {
     public static void main(String[] args) {
         System.out.println("=====================================");
         System.out.println("      Hotel Reservation System       ");
+        System.out.println("      Step-01-without-OOD            ");  // ✅ NEW: Step indicator
         System.out.println("=====================================");
         
         ReservationService reservationService = new ReservationService();
         
         while (true) {
             showMainMenu();
-            
             int choice = getIntInput("Enter your choice: ");
             
             switch (choice) {
@@ -37,7 +37,6 @@ public class Main {
                 default:
                     System.out.println("❌ Invalid choice! Please try again.");
             }
-            
             System.out.println("\n" + "=".repeat(50) + "\n");
         }
     }
@@ -53,33 +52,32 @@ public class Main {
         System.out.println("\n🏨 Make New Reservation");
         System.out.println("-".repeat(35));
         
-        // Create customer
         Customer customer = createCustomer();
         if (customer == null) {
             System.out.println("❌ Customer creation cancelled.");
             return;
         }
         
-        // Get dates
         LocalDate checkInDate = getDateInput("Enter check-in date (yyyy-MM-dd): ");
         if (checkInDate == null) return;
         
         LocalDate checkOutDate = getDateInput("Enter check-out date (yyyy-MM-dd): ");
         if (checkOutDate == null) return;
         
-        // Select room
         Room[] rooms = service.getAvailableRooms();
         showRoomsWithAvailability(rooms, checkInDate, checkOutDate);
         
         int roomNumber = getIntInput("Select room number: ");
         
-        // Payment type
+        // ✅ NEW: Payment type selection
         String paymentType = selectPaymentType();
         
-        // Make reservation
+        // ✅ NEW: Notification type selection
+        String notificationType = selectNotificationType();
+        
         System.out.println("\n🔄 Processing reservation...");
         Reservation reservation = service.makeReservation(
-            customer, roomNumber, checkInDate, checkOutDate, paymentType
+            customer, roomNumber, checkInDate, checkOutDate, paymentType, notificationType  // ✅ NEW: Added notificationType
         );
         
         if (reservation != null && reservation.isConfirmed()) {
@@ -88,6 +86,29 @@ public class Main {
         }
     }
     
+    // ✅ NEW: Payment type selection method
+    private static String selectPaymentType() {
+        System.out.println("\n💳 Payment Methods:");
+        System.out.println("-".repeat(25));
+        System.out.println("1. Credit Card");
+        System.out.println("2. On-site Payment");
+        
+        int choice = getIntInput("Select payment method (1-2): ");
+        return choice == 1 ? "credit" : "onsite";
+    }
+    
+    // ✅ NEW: Notification type selection method
+    private static String selectNotificationType() {
+        System.out.println("\n📬 Notification Methods:");
+        System.out.println("-".repeat(27));
+        System.out.println("1. Email");
+        System.out.println("2. SMS");
+        
+        int choice = getIntInput("Select notification method (1-2): ");
+        return choice == 1 ? "email" : "sms";
+    }
+    
+    // Other methods remain the same...
     private static void showRoomsWithAvailability(Room[] rooms, LocalDate checkIn, LocalDate checkOut) {
         System.out.println("\n🛏️  Available Rooms for " + checkIn + " to " + checkOut + ":");
         System.out.println("-".repeat(60));
@@ -160,14 +181,6 @@ public class Main {
                 System.out.println("❌ Invalid date format! Use yyyy-MM-dd (e.g., 2024-12-01)");
             }
         }
-    }
-    
-    private static String selectPaymentType() {
-        System.out.println("\n💳 Payment Methods:");
-        System.out.println("-".repeat(20));
-        System.out.println("1. Credit Card (Only available method)");
-        System.out.println("Selected: Credit Card");
-        return "credit";
     }
     
     private static void printReservationDetails(Reservation reservation) {

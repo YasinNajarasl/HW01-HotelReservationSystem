@@ -16,7 +16,6 @@ public class ReservationService {
         this.messageSender = new MessageSender();
         this.paymentProcessor = new PaymentProcessor();
         
-        // Initialize available rooms
         this.availableRooms = new Room[] {
             new Room(101, "Luxury", 250.0),
             new Room(102, "Deluxe", 180.0),
@@ -29,22 +28,19 @@ public class ReservationService {
 
     public Reservation makeReservation(Customer customer, int roomNumber, 
                                      LocalDate checkInDate, LocalDate checkOutDate, 
-                                     String paymentType) {
+                                     String paymentType, String notificationType) {  // ✅ NEW: Added notificationType parameter
         
-        // Validate dates
         if (!isValidDateRange(checkInDate, checkOutDate)) {
             System.out.println("❌ Invalid date range: Check-out must be after check-in");
             return null;
         }
 
-        // Find room
         Room room = findRoomByNumber(roomNumber);
         if (room == null) {
             System.out.println("❌ Room " + roomNumber + " not found");
             return null;
         }
 
-        // ✅ Check room availability for the date range
         if (!room.isAvailable(checkInDate, checkOutDate)) {
             System.out.println("❌ Room " + roomNumber + " is not available for the selected dates");
             System.out.println("   Existing reservations:");
@@ -52,17 +48,24 @@ public class ReservationService {
             return null;
         }
 
-        // Create reservation
         Reservation reservation = new Reservation(customer, room, checkInDate, checkOutDate);
         room.addReservation(reservation);
 
-        // Process payment
+        // ✅ CHANGE 1: Enhanced payment processing with On-site support
         boolean paymentSuccess = false;
         if ("credit".equalsIgnoreCase(paymentType)) {
             paymentSuccess = paymentProcessor.processCreditCardPayment(
                 reservation.getTotalAmount(), customer.getName());
-        } else {
+        } 
+        // ✅ NEW: Added On-site payment condition
+        else if ("onsite".equalsIgnoreCase(paymentType)) {
+            paymentSuccess = paymentProcessor.processOnSitePayment(
+                reservation.getTotalAmount(), customer.getName());
+        } 
+        // ✅ NEW: Added else clause for invalid payment types
+        else {
             System.out.println("❌ Invalid payment type: " + paymentType);
+            room.getReservations().remove(reservation);
             return null;
         }
 
@@ -85,17 +88,25 @@ public class ReservationService {
                 reservation.getBookingTime()
             );
 
-            messageSender.sendEmailMessage(confirmationMessage, customer.getEmail());
+            // ✅ CHANGE 2: Enhanced notification with SMS support
+            if ("sms".equalsIgnoreCase(notificationType)) {
+                // ✅ NEW: SMS notification
+                messageSender.sendSmsMessage(confirmationMessage, customer.getPhoneNumber());
+            } else {
+                // Default: Email notification
+                messageSender.sendEmailMessage(confirmationMessage, customer.getEmail());
+            }
+            
             System.out.println("🎉 Reservation completed successfully!");
             return reservation;
         } else {
             System.out.println("❌ Payment failed!");
-            // Remove reservation from room if payment fails
             room.getReservations().remove(reservation);
             return null;
         }
     }
 
+    // Other methods remain unchanged...
     public Room[] getAvailableRooms() {
         return availableRooms.clone();
     }
