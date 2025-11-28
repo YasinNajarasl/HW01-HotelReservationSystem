@@ -1,2 +1,2 @@
 # HW01-HotelReservationSystem
-## Step 1: without using OOD
+## Step 2: using OOD
