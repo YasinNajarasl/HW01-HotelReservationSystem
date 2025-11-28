@@ -52,14 +52,14 @@
 
 ## جمعبندی
 طبق کامیت های موجود در پروژه اضافه کردن دو قابلیت ساده باعث تغییر اساسی در چند فایل شده است که میتوان با مقایسه این دو کامیت آن را متوجه شد.
+
 [طراحی پروژه هتل](ttps://github.com/YasinNajarasl/HW01-HotelReservationSystem/commit/75abd1d76ea91582baf5366e5ed5499bcdb34390)
-[اضافه کردن دو قابلیت پیام رسانی با sms  و پرداخت حضوری](https://github.com/YasinNajarasl/HW01-HotelReservationSystem/commit/75abd1d76ea91582baf5366e5ed5499bcdb34390)
+
+[اضافه کردن دو قابلیت پیام رسانی با sms  و پرداخت حضوری](https://github.com/YasinNajarasl/HW01-HotelReservationSystem/commit/706d04073ddd05b4f9680b9098a00ad50beeb376)
+
 رعایت اصول SOLID باعث:
 - کاهش تغییرات
 - نگهداری آسان‌تر
 - انعطاف پذیری بالا
 - توسعه پذیری بهتر
-
-
-
 
