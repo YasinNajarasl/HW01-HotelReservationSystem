@@ -8,7 +8,6 @@ import java.util.List;
 public class PaymentRegistry {
     private static final List<IPaymentMethod> methods = new ArrayList<>();
     
-    // ✅ فقط کلاس بده! همه چیز خودکار است
     public static void register(IPaymentMethod method) {
         methods.add(method);
     }
@@ -16,6 +15,7 @@ public class PaymentRegistry {
     // ✅ Static registration
     static {
         register(new implementations.CreditCardPayment());
+        register(new implementations.OnSitePayment()); // adding new feature by just adding one line the regestry class
     }
     
     public static List<IPaymentMethod> getAll() {

@@ -8,14 +8,14 @@ import java.util.List;
 public class NotificationRegistry {
     private static final List<INotificationMethod> methods = new ArrayList<>();
     
-    // ✅ فقط کلاس بده! همه چیز خودکار است
     public static void register(INotificationMethod method) {
         methods.add(method);
     }
     
-    // ✅ Static registration برای کلاس‌های اصلی
+    // ✅ Static registration
     static {
         register(new implementations.EmailNotification());
+        register(new implementations.SmsNotification()); // adding new feature by just adding one line the regestry class
     }
     
     public static List<INotificationMethod> getAll() {
